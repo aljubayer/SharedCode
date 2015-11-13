@@ -1,0 +1,297 @@
+﻿
+
+@{
+    ViewBag.Title = "Index";
+    string deleteAction = "";
+    string editAction = "";
+}
+ 
+
+ <link rel="stylesheet" type="text/css" href="~/Content/DataTables/css/jquery.dataTables.min.css">
+ <link rel="stylesheet" type="text/css" href="~/Content/DataTables/css/dataTables.bootstrap.css">
+ <link rel="stylesheet" href="~/Content/themes/base/bootstrap/css/bootstrap.min.css">
+ <link rel="stylesheet" href="~/Content/themes/jquery-ui-1.11.4/jquery-ui.css">
+
+ <script src="~/Scripts/jquery-1.11.3.js" ></script>
+ <script src="~/Scripts/DataTables/jquery.dataTables.min.js" ></script>
+ <script src="~/Scripts/DataTables/dataTables.bootstrap.min.js" ></script>
+ <script src="~/Scripts/DataTables/dataTables.responsive.min.js" ></script>
+
+ <script src="~/Content/themes/base/bootstrap/js/responsive.bootstrap.min.js" ></script>
+ <script src="~/Content/themes/base/bootstrap/js/bootstrap.js" ></script>
+ <script src="~/Content/themes/jquery-ui-1.11.4/jquery-ui.js" ></script>
+    
+<style>
+
+    .paginate_button previous {
+        background: blue;
+    }
+    .paginate_button {
+        background: pink;
+    }
+    #example_paginate {
+    font-family: Verdana;
+    font-size: x-small;
+    }
+    div {
+        padding-bottom: 20px;
+    }
+
+
+    </style>
+<script>
+    $(document).ready(function () {
+        
+        var table = $('#example').DataTable({
+            
+            "bFilter": true,
+            "bLengthChange": false,
+            "processing": true, // control the processing indicator.
+            "serverSide": true, // recommended to use serverSide when data is more than 10000 rows for performance reasons
+            "info": true,   // control table information display field
+            "stateSave": true,  //restore table state on page reload,
+            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "All"]],    // use the first inner array as the page length values and the second inner array as the displayed options
+            "ajax": {
+                "url": "http://localhost:2410/Home/AjaxGetJsonData",
+                "type": "GET"
+            },
+            "columns": [
+                { "data": "Name", "orderable": true },
+                { "data": "Age", "orderable": true },
+                { "data": "DoB", "orderable": true },
+                { "defaultContent": '<button type="button" data-toggle="modal" data-target="#myEdit" name="editEntry" class="'+
+                    'editEntry btn btn-xs btn-success"><span class="glyphicon glyphicon-pencil"></span></button>  '
+                    +'<button type="button" data-toggle="modal" data-target="#myDelete" name="deleteEntry" '
+                    + 'class="deleteEntry btn btn-xs btn-danger"><span class="glyphicon glyphicon-remove"></span></button>', "orderable": false
+                }
+            ],         
+            
+            "order": [[0, "asc"]],         
+            
+        });
+
+
+
+        $(".dataTables_filter input").unbind();
+        $('<label>Date From: </label><input type="text" id="myDatePickerFrom" name="fromDate"/>'+
+          '<label>Date To: </label><input type="text" id="myDatePickerTo" name="toDate"/> '+
+          '<button id="refresh">Search</button>').appendTo('div.dataTables_filter');
+      
+        $('#refresh').click(function () {
+            table.search(
+                $(".dataTables_filter input").val(), 
+                $(".dataTables_filter #myDatePickerFrom").val()+"||"+$(".dataTables_filter #myDatePickerTo").val()
+                ).draw();
+        });
+      
+
+    });
+
+    $(function () {
+        $("#myDatePickerFrom").datepicker();
+        $("#myDatePickerTo").datepicker();
+    });
+    
+    
+</script>
+
+
+
+
+
+<div style="margin:30px; font-family: Verdana;">
+
+    <table id="example" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr style="text-align:left;">
+                <th>Name</th>
+                <th>Age</th>
+                <th>DoB</th>
+                <th>Action</th>
+               
+            </tr>
+        </thead>
+ 
+    </table>
+
+</div>
+
+
+
+    <div class="modal fade" id="myEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <form id="edit-form" method="POST" action="@editAction">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel1">Edit Complain</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label">ID</label>
+                        <div class="col-xs-5">
+                            <input type="text" class="form-control" id="ComplainId" name="ComplainId" readonly="readonly" />
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label">BANumber</label>
+                        <div class="col-xs-5">
+                            <input type="text" class="form-control" id="BANumber" name="BANumber" readonly="readonly" />
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label">Name</label>
+                        <div class="col-xs-5">
+                            <input type="text" class="form-control" id="Name" name="Name" readonly="readonly" />
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label">Rank</label>
+                        <div class="col-xs-5">
+                            <input type="text" class="form-control" id="Rank" name="Rank" readonly="readonly" />
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label">Phone Number</label>
+                        <div class="col-xs-5">
+                            <input type="text" class="form-control" id="NewPhoneNumber" name="NewPhoneNumber" readonly="readonly" />
+                         </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label">Complain Type</label>
+                        <div class="col-xs-5">
+                            <select class="form-control" id="ComplainType" name="ComplainType">
+                                <option value="" selected>Select Type</option>
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label">Problem Description</label>
+                        <div class="col-xs-5">
+                            <textarea class="form-control" id="Description" name="Description"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label">Status</label>
+                        <div class="selectStatus col-xs-5">
+                            <select class="form-control" id="Status" name="Status">
+                                <option value="0" selected="selected">Pending</option>
+                                @* Place for putting Resolver user role codes *@
+                                <option value="1">Resolved</option>
+
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="resolveDiv" style="display: none">
+                        <label class="col-xs-4 control-label">Resolve Description</label>
+                        <div class="col-xs-5">
+
+                            <textarea class="form-control" id="ResolveDescription" name="ResolveDescription"></textarea>
+
+                        </div>
+                    </div>
+
+
+
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group">
+                        <button type="button" class=" col-xs-4 btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" id="editResolveBtn" class=" col-xs-5 btn btn-primary"><span id="aSapn2">Edit Complain</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+            </form>
+    </div>
+
+
+
+
+
+    <div class="modal fade" id="myDelete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <form id="delete-form" method="POST" action="@deleteAction">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Delete Complain</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label">ID</label>
+                        <div class="col-xs-5">
+                            <input type="text" class="form-control" id="deleteComplainId" name="deleteComplainId" readonly="readonly" />
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label">BANumber</label>
+                        <div class="col-xs-5">
+                            <input type="text" class="form-control" id="deleteComplainBANumber" name="complain_BANumber" disabled="disabled" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label">Name</label>
+                        <div class="col-xs-5">
+                            <input type="text" class="form-control" id="deleteComplainName" name="complain_Name" disabled="disabled" />
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label">ComplainType</label>
+                        <div class="col-xs-5">
+                            <input type="text" class="form-control" id="deleteComplainType" name="complain_Type" disabled="disabled" />
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label">PhoneNumber</label>
+                        <div class="col-xs-5">
+                            <input type="text" class="form-control" id="deleteComplainPhoneNumber" name="complain_PhoneNumber" disabled="disabled" />
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label">Rank</label>
+                        <div class="col-xs-5">
+                            <input type="text" class="form-control" id="deleteComplainRank" name="complain_Rank" disabled="disabled" />
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label">Description</label>
+                        <div class="col-xs-5">
+                            <input type="text" class="form-control" id="deleteComplainDescription" name="complain_Description" disabled="disabled" />
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group">
+                        <button type="button" class=" col-xs-4 btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class=" col-xs-5 btn btn-primary">Delete Complain</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+       </form>
+    </div>
+
