@@ -17,7 +17,7 @@
  <script src="~/Scripts/DataTables/dataTables.bootstrap.min.js" ></script>
  <script src="~/Scripts/DataTables/dataTables.responsive.min.js" ></script>
 
- <script src="~/Content/themes/base/bootstrap/js/responsive.bootstrap.min.js" ></script>
+ @*<script src="~/Content/themes/base/bootstrap/js/responsive.bootstrap.min.js" ></script>*@
  <script src="~/Content/themes/base/bootstrap/js/bootstrap.js" ></script>
  <script src="~/Content/themes/jquery-ui-1.11.4/jquery-ui.js" ></script>
     
@@ -43,7 +43,6 @@
     $(document).ready(function () {
         
         var table = $('#example').DataTable({
-            
             "bFilter": true,
             "bLengthChange": false,
             "processing": true, // control the processing indicator.
@@ -59,23 +58,27 @@
                 { "data": "Name", "orderable": true },
                 { "data": "Age", "orderable": true },
                 { "data": "DoB", "orderable": true },
-                { "defaultContent": '<button type="button" data-toggle="modal" data-target="#myEdit" name="editEntry" class="'+
+                {
+                    "defaultContent": '<button type="button" id="editEntry" data-toggle="modal" data-target="#myEdit" name="editEntry" class="' +
                     'editEntry btn btn-xs btn-success"><span class="glyphicon glyphicon-pencil"></span></button>  '
-                    +'<button type="button" data-toggle="modal" data-target="#myDelete" name="deleteEntry" '
+                    + '<button type="button" id="closeEntry" data-toggle="modal" data-target="#myDelete" name="deleteEntry" '
                     + 'class="deleteEntry btn btn-xs btn-danger"><span class="glyphicon glyphicon-remove"></span></button>', "orderable": false
                 }
+              
             ],         
             
-            "order": [[0, "asc"]],         
+            "order": [[0, "asc"]],
+           
             
         });
-
+        
+      
 
 
         $(".dataTables_filter input").unbind();
-        $('<label>Date From: </label><input type="text" id="myDatePickerFrom" name="fromDate"/>'+
-          '<label>Date To: </label><input type="text" id="myDatePickerTo" name="toDate"/> '+
-          '<button id="refresh">Search</button>').appendTo('div.dataTables_filter');
+        $(' <label>Date From: </label><input type="text" id="myDatePickerFrom" name="fromDate"/>'+
+          ' <label>Date To: </label><input type="text" id="myDatePickerTo" name="toDate"/> '+
+          ' <button id="refresh" class="btn btn-default">Search</button>').appendTo('div.dataTables_filter');
       
         $('#refresh').click(function () {
             table.search(
@@ -83,7 +86,28 @@
                 $(".dataTables_filter #myDatePickerFrom").val()+"||"+$(".dataTables_filter #myDatePickerTo").val()
                 ).draw();
         });
-      
+
+
+
+       
+        $(document).on('click', '#editEntry', function () {
+            var data = table.row($(this).parents('tr')).data();
+            var name = data["Name"];
+            console.log(name);
+            $('input[name="Name"]').val(name);
+
+        });
+
+
+        $(document).on('click', '#closeEntry', function () {
+            var data = table.row($(this).parents('tr')).data();
+            var dob = data["DoB"];
+            console.log(dob);
+            $('input[name="BANumber"]').val(dob);
+
+        });
+
+
 
     });
 
@@ -92,11 +116,14 @@
         $("#myDatePickerTo").datepicker();
     });
     
-    
+   
+   
+
 </script>
 
 
-
+ <div id="xxx" style="display: none">
+</div>
 
 
 <div style="margin:30px; font-family: Verdana;">
@@ -107,19 +134,14 @@
                 <th>Name</th>
                 <th>Age</th>
                 <th>DoB</th>
-                <th>Action</th>
-               
+                <th>Action</th>               
             </tr>
-        </thead>
- 
+        </thead> 
     </table>
-
 </div>
 
-
-
-    <div class="modal fade" id="myEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <form id="edit-form" method="POST" action="@editAction">
+<div class="modal fade" id="myEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <form id="edit-form" method="POST" action="@editAction">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -131,7 +153,6 @@
                         <label class="col-xs-4 control-label">ID</label>
                         <div class="col-xs-5">
                             <input type="text" class="form-control" id="ComplainId" name="ComplainId" readonly="readonly" />
-
                         </div>
                     </div>
                     <div class="form-group">
@@ -144,7 +165,7 @@
                     <div class="form-group">
                         <label class="col-xs-4 control-label">Name</label>
                         <div class="col-xs-5">
-                            <input type="text" class="form-control" id="Name" name="Name" readonly="readonly" />
+                            <input type="text" class="form-control" id="Name" name="Name" readonly="readonly"  />
 
                         </div>
                     </div>
@@ -152,7 +173,6 @@
                         <label class="col-xs-4 control-label">Rank</label>
                         <div class="col-xs-5">
                             <input type="text" class="form-control" id="Rank" name="Rank" readonly="readonly" />
-
                         </div>
                     </div>
 
@@ -187,23 +207,15 @@
                                 <option value="0" selected="selected">Pending</option>
                                 @* Place for putting Resolver user role codes *@
                                 <option value="1">Resolved</option>
-
                             </select>
-
                         </div>
                     </div>
-
                     <div class="form-group" id="resolveDiv" style="display: none">
                         <label class="col-xs-4 control-label">Resolve Description</label>
                         <div class="col-xs-5">
-
                             <textarea class="form-control" id="ResolveDescription" name="ResolveDescription"></textarea>
-
                         </div>
                     </div>
-
-
-
                 </div>
                 <div class="modal-footer">
                     <div class="form-group">
@@ -213,7 +225,7 @@
                 </div>
             </div>
         </div>
-            </form>
+      </form>
     </div>
 
 
@@ -240,7 +252,7 @@
                     <div class="form-group">
                         <label class="col-xs-4 control-label">BANumber</label>
                         <div class="col-xs-5">
-                            <input type="text" class="form-control" id="deleteComplainBANumber" name="complain_BANumber" disabled="disabled" />
+                            <input type="text" class="form-control" id="deleteComplainBANumber" name="complain_BANumber" readonly="readonly" name="BANumber" />
                         </div>
                     </div>
 
