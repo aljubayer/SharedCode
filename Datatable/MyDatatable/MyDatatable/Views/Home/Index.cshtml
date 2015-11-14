@@ -17,18 +17,18 @@
  <script src="~/Scripts/DataTables/dataTables.bootstrap.min.js" ></script>
  <script src="~/Scripts/DataTables/dataTables.responsive.min.js" ></script>
 
- @*<script src="~/Content/themes/base/bootstrap/js/responsive.bootstrap.min.js" ></script>*@
+ <script src="~/Content/themes/base/bootstrap/js/responsive.bootstrap.min.js" ></script>
  <script src="~/Content/themes/base/bootstrap/js/bootstrap.js" ></script>
  <script src="~/Content/themes/jquery-ui-1.11.4/jquery-ui.js" ></script>
     
 <style>
 
-    .paginate_button previous {
-        background: blue;
-    }
     .paginate_button {
-        background: pink;
+        background: lightblue;
     }
+    /*.paginate_button {
+        background: pink;
+    }*/
     #example_paginate {
     font-family: Verdana;
     font-size: x-small;
@@ -43,6 +43,7 @@
     $(document).ready(function () {
         
         var table = $('#example').DataTable({
+            
             "bFilter": true,
             "bLengthChange": false,
             "processing": true, // control the processing indicator.
@@ -68,12 +69,12 @@
             ],         
             
             "order": [[0, "asc"]],
-           
-            
         });
         
+       
       
 
+      
 
         $(".dataTables_filter input").unbind();
         $(' <label>Date From: </label><input type="text" id="myDatePickerFrom" name="fromDate"/>'+
@@ -87,6 +88,18 @@
                 ).draw();
         });
 
+
+
+
+        $('a.toggle-vis').on('click', function (e) {
+            e.preventDefault();
+
+            // Get the column API object
+            var column = table.column($(this).attr('data-column'));
+
+            // Toggle the visibility
+            column.visible(!column.visible());
+        });
 
 
        
@@ -107,7 +120,11 @@
 
         });
 
-
+        $(document).on('click', "#showHideColumn", function (e) {
+            e.preventDefault();
+            var tableColumn = table.column($(this).attr("data-ColumnIndex"));
+            tableColumn.visible(!tableColumn.visible());
+        });
 
     });
 
@@ -122,13 +139,26 @@
 </script>
 
 
- <div id="xxx" style="display: none">
+
+<div class="row-fluid">
+     <label><span class="form-control">Show/Hide Columns</span></label>
+    <div class="span4">
+        <button class="btn btn-default" id="showHideColumn" data-ColumnIndex="0">Name</button>
+        <button class="btn btn-default" id="showHideColumn" data-ColumnIndex="1">Age</button>
+        <button class="btn btn-default" id="showHideColumn" data-ColumnIndex="2">DoB</button>
+        <button class="btn btn-default" id="showHideColumn" data-ColumnIndex="3">Action</button>
+    </div>
+    
 </div>
 
+<div class="form-control">
+   
+    
+</div>
 
-<div style="margin:30px; font-family: Verdana;">
+<div class="table-responsive" style="margin:30px; font-family: Verdana;">
 
-    <table id="example" class="display" cellspacing="0" width="100%">
+    <table id="example" class="table table-bordered" cellspacing="0" width="100%">
         <thead>
             <tr style="text-align:left;">
                 <th>Name</th>
